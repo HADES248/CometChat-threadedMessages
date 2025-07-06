@@ -19,7 +19,6 @@ function App() {
 
   return (
     <div className="app-layout">
-      {/* LEFT: Sidebar for selecting conversations */}
       <div className="conversations-wrapper">
         <CometChatSelector
           onSelectorItemClicked={(activeItem) => {
@@ -46,7 +45,6 @@ function App() {
 
       {(selectedUser || selectedGroup) ? (
         <>
-          {/* MIDDLE: Main chat view */}
           <div className="messages-wrapper">
             <CometChatMessageHeader user={selectedUser} group={selectedGroup} />
             <CometChatMessageList
@@ -59,8 +57,6 @@ function App() {
               group={selectedGroup}
             />
           </div>
-
-          {/* RIGHT: Threaded messages */}
           {threadMessage && (
             <div className="thread-pane">
               <CometChatThreadedMessages
