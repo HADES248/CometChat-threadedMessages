@@ -63,6 +63,7 @@
 
 .cometchat-threaded-message-composer {
     padding: 8px;
+    background: var(--cometchat-background-color-01, #FFFFFF);
 }
 
 .side-component-wrapper>.cometchat,
