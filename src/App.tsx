@@ -18,7 +18,7 @@ function App() {
   const [threadMessage, setThreadMessage] = useState<CometChat.BaseMessage | null>(null);
 
   return (
-    <div className="app-layout">
+    <div className={`conversations-with-messages ${threadMessage ? 'thread-active' : ''}`}>
       <div className="conversations-wrapper">
         <CometChatSelector
           onSelectorItemClicked={(activeItem) => {
@@ -37,7 +37,6 @@ function App() {
               setSelectedUser(undefined);
               setSelectedGroup(undefined);
             }
-
             setThreadMessage(null); // Clear thread when switching
           }}
         />
@@ -45,12 +44,15 @@ function App() {
 
       {(selectedUser || selectedGroup) ? (
         <>
-          <div className="messages-wrapper">
-            <CometChatMessageHeader user={selectedUser} group={selectedGroup} />
+          <div className={`messages-wrapper ${threadMessage ? 'thread-active' : ''}`}>
+            <CometChatMessageHeader
+              user={selectedUser}
+              group={selectedGroup} />
             <CometChatMessageList
               user={selectedUser}
               group={selectedGroup}
-              onThreadRepliesClick={(message) => setThreadMessage(message)}
+              onThreadRepliesClick={(message) => setThreadMessage(message)
+              }
             />
             <CometChatMessageComposer
               user={selectedUser}
@@ -58,14 +60,12 @@ function App() {
             />
           </div>
           {threadMessage && (
-            <div className="thread-pane">
               <CometChatThreadedMessages
                 message={threadMessage}
                 selectedItem={selectedUser || selectedGroup}
                 onClose={() => setThreadMessage(null)}
                 showComposer={true}
               />
-            </div>
           )}
         </>
       ) : (

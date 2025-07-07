@@ -6,9 +6,9 @@ import {
   CometChatThreadHeader,
   CometChatUIKit,
   CometChatUserEvents,
-  getLocalizedString
+  getLocalizedString,
 } from "@cometchat/chat-uikit-react";
-import { CometChat } from '@cometchat/chat-sdk-javascript';
+import { CometChat } from "@cometchat/chat-sdk-javascript";
 import { useMemo } from "react";
 
 interface ThreadProps {
@@ -16,24 +16,21 @@ interface ThreadProps {
   selectedItem: CometChat.User | CometChat.Group | CometChat.Conversation | CometChat.Call | undefined;
   onClose?: () => void;
   showComposer?: boolean;
-  onSubtitleClicked?: () => void;
-  goToMessageId?: string;
   searchKeyword?: string;
 }
 
-export const CometChatThreadedMessages = (props: ThreadProps) => {
-  const {
-    message,
-    selectedItem,
-    onClose = () => {},
-    showComposer = false,
-    onSubtitleClicked,
-    goToMessageId,
-    searchKeyword
-  } = props;
+export const CometChatThreadedMessages = ({
+  message,
+  selectedItem,
+  onClose = () => {},
+  showComposer = false,
+  searchKeyword,
+}: ThreadProps) => {
+  if (!message) return null;
 
   const formatters = useMemo(() => {
-    const baseFormatters = CometChatUIKit.getDataSource().getAllTextFormatters({});
+    const dataSource = CometChatUIKit.getDataSource?.();
+    const baseFormatters = dataSource?.getAllTextFormatters?.({}) || [];
     return searchKeyword?.trim()
       ? [...baseFormatters, new CometChatTextHighlightFormatter(searchKeyword)]
       : baseFormatters;
@@ -67,19 +64,20 @@ export const CometChatThreadedMessages = (props: ThreadProps) => {
   const group = getSelectedGroup();
 
   const messagesRequestBuilder = useMemo(() => {
-    return new CometChat.MessagesRequestBuilder()
+    const builder = new CometChat.MessagesRequestBuilder()
       .setParentMessageId(message.getId())
-      .setLimit(50); // <-- fix: add required limit
-  }, [message]);
+      .setLimit(50);
+
+    if (user) builder.setUID(user.getUid());
+    if (group) builder.setGUID(group.getGuid());
+
+    return builder;
+  }, [message, user, group]);
 
   return (
     <div className="cometchat-threaded-message">
       <div className="cometchat-threaded-message-header">
-        <CometChatThreadHeader
-          parentMessage={message}
-          onClose={onClose}
-          onSubtitleClicked={onSubtitleClicked}
-        />
+        <CometChatThreadHeader parentMessage={message} onClose={onClose} />
       </div>
 
       <div className="cometchat-threaded-message-list">
@@ -100,26 +98,24 @@ export const CometChatThreadedMessages = (props: ThreadProps) => {
             group={group}
           />
         </div>
-      ) : (
+      ) : user?.getBlockedByMe?.() ? (
         <div
           className="message-composer-blocked"
           onClick={() => {
-            if (user) {
-              CometChat.unblockUsers([user.getUid()]).then(() => {
-                user.setBlockedByMe(false);
-                CometChatUserEvents.ccUserUnblocked.next(user);
-              });
-            }
+            CometChat.unblockUsers([user.getUid()]).then(() => {
+              user.setBlockedByMe(false);
+              CometChatUserEvents.ccUserUnblocked.next(user);
+            });
           }}
         >
           <div className="message-composer-blocked__text">
-            {getLocalizedString("cannot_send_to_blocked_user")} {" "}
+            {getLocalizedString("cannot_send_to_blocked_user")}{" "}
             <span className="message-composer-blocked__text-unblock">
               {getLocalizedString("click_to_unblock")}
             </span>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

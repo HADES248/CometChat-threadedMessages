@@ -2,77 +2,75 @@
 #root {
   text-align: center;
   width: 100vw;
+  /* Full viewport width */
   height: 100vh;
+  /* Full viewport height */
   background-color: #282c34;
+  /* Dark background */
 }
 
-/* Overall layout */
-.app-layout,
+/* Layout container for conversations and messages */
 .conversations-with-messages {
   display: flex;
   height: 100%;
   width: 100%;
-  flex-direction: row;
-  overflow: hidden;
+  flex-direction: row
 }
 
-/* Sidebar container for conversation list */
+/* Sidebar container for the conversation list */
 .conversations-wrapper {
-  width: 300px; /* Or adjust based on your preference */
-  min-width: 300px;
-  max-width: 300px;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: 100vh;
+  width: 480px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #ddd;
-  background-color: #fff;
-  flex-shrink: 0;
 }
 
-/* Prevent scrolling inside conversation component */
-.conversations-wrapper > .cometchat {
+@media only screen and (max-width: 768px) {
+  .conversations-wrapper {
+    display: none;
+  }
+}
+
+/* Prevent scrolling inside the conversation list */
+.conversations-wrapper>.cometchat {
   overflow: hidden;
-  flex: 1;
 }
 
-/* Main chat area */
+/* Main chat messages container */
 .messages-wrapper {
-  flex: 1;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  height: 100%;
   background: #fff;
-  overflow: hidden;
   border-right: 1px solid #eee;
+  overflow: hidden;
 }
 
-/* Threaded message pane */
-.thread-pane {
-  width: 400px;
-  min-width: 400px;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  background: #f9f9f9;
-  border-left: 1px solid #ddd;
-  flex-shrink: 0;
+@media only screen and (max-width: 768px) {
+  .messages-wrapper.thread-active {
+    display: none;
+  }
 }
 
-/* Placeholder when no chat is selected */
+
+/* Styles for the placeholder when no conversation is selected */
 .empty-conversation {
-  flex: 1;
+  height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background: var(--cometchat-background-color-03, #F5F5F5);
+  /* Light gray background */
   color: var(--cometchat-text-color-secondary, #727272);
+  /* Secondary text color */
   font: var(--cometchat-font-body-regular, 400 14px Roboto);
 }
 
-/* Message composer */
+/* Remove border-radius for the message composer input */
 .cometchat .cometchat-message-composer {
-  border-radius: 0;
+  border-radius: 0px;
 }
