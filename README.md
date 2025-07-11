@@ -1,56 +1,84 @@
-# CometChat React Integration Guide
+# How to Build a CometChat UI Kit with Threaded Messages
 
-This README provides a step-by-step guide to integrating CometChat into your React application using the CometChat UI Kit (Conversation + Message View).
+## What You'll Be Building
+
+![Chat UI Screenshot](https://github.com/HADES248/CometChat-threadedMessages/blob/master/src/assets/threadedMessages.png)  
+*Alt text: Screenshot of a working CometChat-powered React app with a user logged in and threaded chat visible*
+
+You’ll build a React TypeScript application using CometChat’s official UI Kit that supports threaded messages. Users will be able to log in, view conversations, reply to specific messages, and engage in real-time threaded messaging.
+
+---
+
+## Introduction
+
+In this guide, you’ll integrate **threaded message support** using CometChat’s React UI Kit.
+
+Threads enable replying to specific messages inside conversations, making chats more organized and contextual — especially useful for group chats or complex discussions.
+
+---
 
 ## Prerequisites
 
-Before using this repository, follow the steps below:
+**Knowledge Required**
+- React basics (hooks, JSX, component state)
+- TypeScript and ES6+
+- Familiarity with `vite` and component folder structures
 
-1. **Create a CometChat Account**
-   Sign up at (https://app.cometchat.com/signup)
+**Tools Required**
+- Node.js v16+
+- npm v8+
+- Git (optional)
+- Code editor like VS Code
 
-2. **Create a New App**
-   After signing in, create a new app from your CometChat dashboard.
+---
 
-3. **Download This Code**
-   Clone or download the repository that contains the CometChat UI Kit (Conversation + Message View).
+## CometChat Integration
 
-4. **Install Dependencies**
-   Navigate to the project directory and install dependencies:
+### Step 1: Set Up Your Basic UI Kit
 
-5. **Get Credentials**
-   From the **Home** tab in your CometChat dashboard, copy the following:
+Before Implementing Threaded Messages, Ensure you have successfully implemented the CometChat UI Kit
 
-   * App ID
-   * Region
-   * Auth Key
+- [https://github.com/HADES248/CometChatReact-UI-Kit]
 
-6. **Initialize UI Kit**
-   Open `src/CometChat-init/CometChat-init.tsx` and paste your credentials:
+### Step 2: Setting Up the Application
 
-7. **Authenticate the User**
-   Use CometChat's authentication methods to log in a user. You can use demo users or create your own.
+After setting up the base app, replace the default App.tsx and App.css with the versions from this repository to enable threaded messaging:
 
-8. **Create Users**
-   You can create users using CometChat Dashboard or via their SDK.
+- App.tsx
+  - [https://github.com/HADES248/CometChat-threadedMessages/blob/master/src/App.tsx]
+- App.css
+  - [https://github.com/HADES248/CometChat-threadedMessages/blob/master/src/App.css]
+  
+---
 
-9. **Demo Users**
-   Use the preconfigured demo users to test the chat functionalities.
+These updated files contain:
 
-10. **Build the Chat Experience**
-    Integrate the UI components to stitch the full chat experience.
+- UI layout for threaded messages
 
-11. **Stitch the Components**
-    Combine conversation list and message view components into your app.
+- Event handling for thread open/close
 
-12. **Run the App**
-    Start the development server:
+- Integrated CometChat components like CometChatMessages, CometChatThreadedMessages, etc.
 
-13. **Customize the Theme**
-    Modify fonts, colors, and other UI settings to match your brand.
+### Step 3: Setting Up Your Threaded Messages
 
-# Notes
+To enable threaded messages, copy and paste the necessary files from the repository:
 
-* Make sure you are connected to the internet while using CometChat services.
-* Refer to [CometChat Documentation](https://www.cometchat.com/docs/) for advanced configurations and custom features.
+- CometChatThreadedMessages.tsx
+  - [https://github.com/HADES248/CometChat-threadedMessages/blob/master/src/components/CometChatThreadMessages/CometChatThreadedMessage.tsx]
+- CometChatThreadedMessages.css
+  - [https://github.com/HADES248/CometChat-threadedMessages/blob/master/src/components/CometChatThreadMessages/CometChatThreadedMessage.css]
+ 
 
+## Step 4: Test & Verify
+
+### Testing
+1. Start the development server:
+   ```bash
+   npm run dev
+   ```
+- Log in with valid credentials
+- Select a conversation
+- Send and reply to messages using threads in real time
+
+
+  
