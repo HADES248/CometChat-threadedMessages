@@ -9,11 +9,11 @@ import {
   getLocalizedString,
 } from "@cometchat/chat-uikit-react";
 import { CometChat } from "@cometchat/chat-sdk-javascript";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface ThreadProps {
   message: CometChat.BaseMessage;
-  selectedItem: CometChat.User | CometChat.Group | CometChat.Conversation | CometChat.Call | undefined;
+  selectedItem?: CometChat.User | CometChat.Group | CometChat.Conversation | CometChat.Call;
   onClose?: () => void;
   showComposer?: boolean;
   searchKeyword?: string;
@@ -26,18 +26,22 @@ export const CometChatThreadedMessages = ({
   showComposer = false,
   searchKeyword,
 }: ThreadProps) => {
-  if (!message) return null;
+  const [parentMessage, setParentMessage] = useState<CometChat.BaseMessage | null>(null);
 
-  const formatters = useMemo(() => {
-    const dataSource = CometChatUIKit.getDataSource?.();
-    const baseFormatters = dataSource?.getAllTextFormatters?.({}) || [];
-    return searchKeyword?.trim()
-      ? [...baseFormatters, new CometChatTextHighlightFormatter(searchKeyword)]
-      : baseFormatters;
-  }, [searchKeyword]);
+  // Fetch complete parent message if needed
+  useEffect(() => {
+    const fetchParentMessage = async () => {
+      try {
+        const fullMessage = await CometChat.getMessageDetails(message.getId());
+        setParentMessage(fullMessage);
+      } catch (error) {
+        console.error("Failed to fetch parent message:", error);
+      }
+    };
+    fetchParentMessage();
+  }, [message]);
 
-  const getSelectedUser = (): CometChat.User | undefined => {
-    if (!selectedItem) return undefined;
+  const user = useMemo(() => {
     if (selectedItem instanceof CometChat.User) return selectedItem;
     if (
       selectedItem instanceof CometChat.Conversation &&
@@ -46,10 +50,9 @@ export const CometChatThreadedMessages = ({
       return selectedItem.getConversationWith() as CometChat.User;
     }
     return undefined;
-  };
+  }, [selectedItem]);
 
-  const getSelectedGroup = (): CometChat.Group | undefined => {
-    if (!selectedItem) return undefined;
+  const group = useMemo(() => {
     if (selectedItem instanceof CometChat.Group) return selectedItem;
     if (
       selectedItem instanceof CometChat.Conversation &&
@@ -58,10 +61,15 @@ export const CometChatThreadedMessages = ({
       return selectedItem.getConversationWith() as CometChat.Group;
     }
     return undefined;
-  };
+  }, [selectedItem]);
 
-  const user = getSelectedUser();
-  const group = getSelectedGroup();
+  const formatters = useMemo(() => {
+    const dataSource = CometChatUIKit.getDataSource?.();
+    const baseFormatters = dataSource?.getAllTextFormatters?.({}) || [];
+    return searchKeyword?.trim()
+      ? [...baseFormatters, new CometChatTextHighlightFormatter(searchKeyword)]
+      : baseFormatters;
+  }, [searchKeyword]);
 
   const messagesRequestBuilder = useMemo(() => {
     const builder = new CometChat.MessagesRequestBuilder()
@@ -74,15 +82,17 @@ export const CometChatThreadedMessages = ({
     return builder;
   }, [message, user, group]);
 
+  if (!parentMessage) return null;
+
   return (
     <div className="cometchat-threaded-message">
       <div className="cometchat-threaded-message-header">
-        <CometChatThreadHeader parentMessage={message} onClose={onClose} />
+        <CometChatThreadHeader parentMessage={parentMessage} onClose={onClose} />
       </div>
 
       <div className="cometchat-threaded-message-list">
         <CometChatMessageList
-          parentMessageId={message.getId()}
+          parentMessageId={parentMessage.getId()}
           user={user}
           group={group}
           messagesRequestBuilder={messagesRequestBuilder}
@@ -93,7 +103,7 @@ export const CometChatThreadedMessages = ({
       {showComposer ? (
         <div className="cometchat-threaded-message-composer">
           <CometChatMessageComposer
-            parentMessageId={message.getId()}
+            parentMessageId={parentMessage.getId()}
             user={user}
             group={group}
           />
